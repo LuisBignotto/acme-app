@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { getUserProfile } from '../services/userService';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -8,20 +9,22 @@ const ProfileScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                const data = await getUserProfile();
-                setUserData(data);
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchUserProfile = async () => {
+        try {
+            const data = await getUserProfile();
+            setUserData(data);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchUserProfile();
-    }, []);
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchUserProfile();
+        }, [])
+    );
 
     if (loading) {
         return (
@@ -53,11 +56,15 @@ const ProfileScreen = ({ navigation }) => {
                     </View>
                 ) : (
                     userData.baggages.map((baggage, index) => (
-                        <View key={baggage.id} style={styles.baggageItem}>
+                        <TouchableOpacity
+                            key={baggage.id}
+                            style={styles.baggageItem}
+                            onPress={() => navigation.navigate('BaggageDetails', { baggage })}
+                        >
                             <Icon name="suitcase" size={24} color="#367CFF" style={styles.baggageIcon} />
                             <Text style={styles.txtBaggage}>Mala {index + 1}</Text>
                             <Text style={styles.txtBaggageSec}>Status: {baggage.status.status}</Text>
-                        </View>
+                        </TouchableOpacity>
                     ))
                 )}
             </View>
@@ -115,10 +122,10 @@ const styles = StyleSheet.create({
     baggageIcon: {
         marginRight: 10,
     },
-    txtBaggage: {  
+    txtBaggage: {
         fontSize: 15,
     },
-    txtBaggageSec: {  
+    txtBaggageSec: {
         fontSize: 15,
         color: '#3E3E3E',
     },
