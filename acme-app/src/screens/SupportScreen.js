@@ -1,22 +1,126 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { getUserTickets } from '../services/ticketService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import TicketItem from '../components/TicketItem';
+import FaqItem from '../components/FaqItem';
 
-const SupportScreen = () => {
+const SupportScreen = ({ navigation }) => {
+    const [tickets, setTickets] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchTickets = async () => {
+            try {
+                const userId = await AsyncStorage.getItem('userId');
+                const parsedUserId = parseInt(userId, 10); 
+                if (!isNaN(parsedUserId)) {
+                    const data = await getUserTickets(parsedUserId);
+                    setTickets(data);
+                } else {
+                    throw new Error('ID do usuário inválido');
+                }
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTickets();
+    }, []);
+
+    const handleCreateTicket = () => {
+        navigation.navigate('CreateTicket');
+    };
+
+    const handleTicketPress = (ticket) => {
+        navigation.navigate('TicketDetails', { ticket });
+    };
+
+    const faqs = [
+        {
+            question: 'Como rastrear minha bagagem?',
+            answer: 'Você pode rastrear sua bagagem através do nosso aplicativo na seção "Minhas Bagagens".'
+        },
+        {
+            question: 'Qual o código de rastreio da minha mala?',
+            answer: 'O código de rastreio da sua mala é fornecido após o check-in e pode ser encontrado na etiqueta da bagagem.'
+        },
+        {
+            question: 'Minha mala sumiu, o que devo fazer?',
+            answer: 'Entre em contato com nosso suporte imediatamente através da seção "Abrir um ticket".'
+        }
+    ];
+
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Suporte</Text>
-        </View>
+
+            <Text style={styles.subtitle}>Seus Tickets</Text>
+            {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+            ) : error ? (
+                <Text style={styles.errorText}>{error}</Text>
+            ) : tickets.length === 0 ? (
+                <Text style={styles.noTicketsText}>Nenhum ticket aberto.</Text>
+            ) : (
+                tickets.map(ticket => (
+                    <TicketItem key={ticket.id} ticket={ticket} onPress={() => handleTicketPress(ticket)} />
+                ))
+            )}
+
+            <Text style={styles.subtitle}>Perguntas Frequentes</Text>
+            <View>
+                {faqs.map((faq, index) => (
+                    <FaqItem key={index} faq={faq} />
+                ))}
+                <TouchableOpacity style={styles.contactButton} onPress={handleCreateTicket}>
+                    <Text style={styles.contactButtonText}>Abrir um ticket</Text>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        flexGrow: 1,
+        padding: 20,
+        backgroundColor: '#fff',
+        paddingTop: 50,
     },
     title: {
         fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    subtitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    errorText: {
+        color: 'red',
+        marginBottom: 10,
+    },
+    noTicketsText: {
+        fontSize: 16,
+        color: '#555',
+        marginBottom: 20,
+    },
+    contactButton: {
+        backgroundColor: '#367CFF',
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    contactButtonText: {
+        color: '#fff',
+        fontSize: 18,
         fontWeight: 'bold',
     },
 });

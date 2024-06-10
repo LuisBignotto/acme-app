@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { getUserProfile } from '../services/userService';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import BaggageItem from '../components/BaggageItem';
 
 const ProfileScreen = ({ navigation }) => {
     const [userData, setUserData] = useState(null);
@@ -12,6 +13,7 @@ const ProfileScreen = ({ navigation }) => {
     const fetchUserProfile = async () => {
         try {
             const data = await getUserProfile();
+            await AsyncStorage.setItem('userId', String(data.id));
             setUserData(data);
         } catch (error) {
             setError(error.message);
@@ -56,15 +58,12 @@ const ProfileScreen = ({ navigation }) => {
                     </View>
                 ) : (
                     userData.baggages.map((baggage, index) => (
-                        <TouchableOpacity
+                        <BaggageItem
                             key={baggage.id}
-                            style={styles.baggageItem}
+                            baggage={baggage}
+                            index={index}
                             onPress={() => navigation.navigate('BaggageDetails', { baggage })}
-                        >
-                            <Icon name="suitcase" size={24} color="#367CFF" style={styles.baggageIcon} />
-                            <Text style={styles.txtBaggage}>Mala {index + 1}</Text>
-                            <Text style={styles.txtBaggageSec}>Status: {baggage.status.status}</Text>
-                        </TouchableOpacity>
+                        />
                     ))
                 )}
             </View>
@@ -112,22 +111,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#636363',
         padding: 20,
         borderRadius: 10,
-    },
-    baggageItem: {
-        backgroundColor: 'rgba(54, 124, 255, 0.42)',
-        padding: 10,
-        borderRadius: 10,
-        marginBottom: 10,
-    },
-    baggageIcon: {
-        marginRight: 10,
-    },
-    txtBaggage: {
-        fontSize: 15,
-    },
-    txtBaggageSec: {
-        fontSize: 15,
-        color: '#3E3E3E',
     },
     helpContainer: {
         width: '100%',
