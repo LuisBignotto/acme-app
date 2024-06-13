@@ -7,6 +7,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import TabNavigator from './src/navigation/TabNavigator';
 import BaggageDetailsScreen from './src/screens/BaggageDetailsScreen';
 import TicketDetailsScreen from './src/screens/TicketDetailsScreen';
+import CreateTicketScreen from './src/screens/CreateTicketScreen';
 import { navigationRef } from './src/navigation/RootNavigation';
 
 const Stack = createStackNavigator();
@@ -49,6 +50,7 @@ export default function App() {
                 <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
                 <Stack.Screen name="BaggageDetails" component={BaggageDetailsScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="TicketDetails" component={TicketDetailsScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="CreateTicket" component={CreateTicketScreen} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
     );

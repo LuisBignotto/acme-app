@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { getUserProfile } from '../services/userService';
+import { getBaggagesTrackedByUser } from '../services/baggageService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BaggageItem from '../components/BaggageItem';
 
 const ProfileScreen = ({ navigation }) => {
     const [userData, setUserData] = useState(null);
+    const [trackedBaggages, setTrackedBaggages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -17,14 +19,24 @@ const ProfileScreen = ({ navigation }) => {
             setUserData(data);
         } catch (error) {
             setError(error.message);
-        } finally {
-            setLoading(false);
+        }
+    };
+
+    const fetchTrackedBaggages = async () => {
+        try {
+            const userId = await AsyncStorage.getItem('userId');
+            const data = await getBaggagesTrackedByUser(userId);
+            setTrackedBaggages(data);
+        } catch (error) {
+            setError(error.message);
         }
     };
 
     useFocusEffect(
         React.useCallback(() => {
-            fetchUserProfile();
+            setLoading(true);
+            fetchUserProfile().finally(() => setLoading(false));
+            fetchTrackedBaggages().finally(() => setLoading(false));
         }, [])
     );
 
@@ -52,12 +64,12 @@ const ProfileScreen = ({ navigation }) => {
             </View>
             <View style={styles.mainContainer}>
                 <Text style={styles.baggageTitle}>Suas Bagagens</Text>
-                {userData.baggages.length === 0 ? (
+                {userData && userData.baggages.length === 0 ? (
                     <View style={styles.noBaggage}>
                         <Text>Você ainda não possui nenhuma mala</Text>
                     </View>
                 ) : (
-                    userData.baggages.map((baggage, index) => (
+                    userData && userData.baggages.map((baggage, index) => (
                         <BaggageItem
                             key={baggage.id}
                             baggage={baggage}
@@ -65,6 +77,19 @@ const ProfileScreen = ({ navigation }) => {
                             onPress={() => navigation.navigate('BaggageDetails', { baggage })}
                         />
                     ))
+                )}
+                {trackedBaggages.length > 0 && (
+                    <>
+                        <Text style={styles.baggageTitle}>Malas Rastreadas</Text>
+                        {trackedBaggages.map((baggage, index) => (
+                            <BaggageItem
+                                key={baggage.id}
+                                baggage={baggage}
+                                index={index}
+                                onPress={() => navigation.navigate('BaggageDetails', { baggage })}
+                            />
+                        ))}
+                    </>
                 )}
             </View>
             <View style={styles.helpContainer}>
