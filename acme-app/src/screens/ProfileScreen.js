@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { getUserProfile } from '../services/userService';
 import { getBaggagesTrackedByUser } from '../services/baggageService';
@@ -58,6 +58,7 @@ const ProfileScreen = ({ navigation }) => {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
+            <Image source={require('../../assets/acmelogo.png')} style={styles.logo} />
             <View style={styles.welcomeContainer}>
                 <Text style={styles.welcomeText}>BEM-VINDO(A) AO ACME APP</Text>
                 <Text style={styles.subtitle}>Sua bagagem está mais segura com a gente!</Text>
@@ -80,7 +81,6 @@ const ProfileScreen = ({ navigation }) => {
                 )}
                 {trackedBaggages.length > 0 && (
                     <>
-                        <Text style={styles.baggageTitle}>Malas Rastreadas</Text>
                         {trackedBaggages.map((baggage, index) => (
                             <BaggageItem
                                 key={baggage.id}
@@ -108,9 +108,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
     },
+    logo: {
+        width: 200,
+        height: 200,
+    },
     welcomeContainer: {
         alignItems: 'center',
-        marginBottom: 20,
     },
     welcomeText: {
         fontSize: 20,
