@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CheckBox from 'expo-checkbox';
 import Button from '../components/Button';
@@ -43,34 +43,41 @@ const SearchScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Busca por código</Text>
-            <Icon name="suitcase" size={100} color="#367CFF" style={styles.icon} />
-            <Text style={styles.subtitle}>Buscar mala</Text>
-            <View style={styles.inputContainer}>
-                <Text style={styles.label}>Digite a tag da mala para buscar.</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Exemplo: 33323-3213211"
-                    value={tag}
-                    onChangeText={setTag}
-                />
+            <View style={styles.box}>
+                <View style={styles.header}>
+                    <Icon name="search" size={40} color="#367CFF" style={styles.icon} />
+                    <Text style={styles.headerText}>Buscar Mala</Text>
+                </View>
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Digite a tag da mala para buscar.</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Exemplo: 33323-3213211"
+                        value={tag}
+                        onChangeText={setTag}
+                    />
+                </View>
+                <View style={styles.checkboxContainer}>
+                    <CheckBox
+                        value={keepTrack}
+                        onValueChange={setKeepTrack}
+                        color={keepTrack ? '#367CFF' : undefined}
+                        style={styles.checkbox}
+                    />
+                    <Text style={styles.checkboxLabel}>Manter na minha lista de malas</Text>
+                </View>
+                <TouchableOpacity style={styles.button} onPress={handleSearch}>
+                    <Text style={styles.buttonText}>Buscar</Text>
+                </TouchableOpacity>
+                <View style={styles.separatorContainer}>
+                    <View style={styles.separatorLine} />
+                    <Text style={styles.separatorText}>ou</Text>
+                    <View style={styles.separatorLine} />
+                </View>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('QrCodeScanner')}>
+                    <Text style={styles.buttonText}>Ler QR Code</Text>
+                </TouchableOpacity>
             </View>
-            <View style={styles.checkboxContainer}>
-                <CheckBox
-                    value={keepTrack}
-                    onValueChange={setKeepTrack}
-                    color={keepTrack ? '#367CFF' : undefined}
-                    style={styles.checkbox}
-                />
-                <Text style={styles.checkboxLabel}>Manter na minha lista de malas</Text>
-            </View>
-            <Button title="Buscar" onPress={handleSearch} />
-            <View style={styles.separatorContainer}>
-                <View style={styles.separatorLine} />
-                <Text style={styles.separatorText}>ou</Text>
-                <View style={styles.separatorLine} />
-            </View>
-            <Button title="Ler QR Code" onPress={() => navigation.navigate('QrCodeScanner')} />
         </View>
     );
 };
@@ -80,26 +87,41 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
-        padding: 20,
+        backgroundColor: '#f9f9f9',
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 80,
+    box: {
+        width: '90%',
+        padding: 20,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 8,
+        elevation: 5,
+        alignItems: 'center',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
     },
     icon: {
-        marginBottom: 40,
+        marginRight: 10,
     },
-    subtitle: {
-        fontSize: 25,
+    headerText: {
+        fontSize: 28,
         fontWeight: 'bold',
-        alignSelf: 'flex-start',
-        marginLeft: '10%',
+        color: '#367CFF',
+    },
+    description: {
+        fontSize: 16,
+        color: '#555',
+        marginBottom: 20,
+        textAlign: 'center',
     },
     inputContainer: {
-        width: '80%',
-        alignItems: 'flex-start',
+        width: '100%',
         marginBottom: 20,
     },
     label: {
@@ -112,26 +134,27 @@ const styles = StyleSheet.create({
         height: 40,
         borderColor: '#ccc',
         borderWidth: 1,
-        borderRadius: 5,
+        borderRadius: 8,
         padding: 10,
-        marginBottom: 10,
+        backgroundColor: '#fff',
     },
     checkboxContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        width: '80%',
         marginBottom: 20,
+        width: '100%',
     },
     checkbox: {
         marginRight: 10,
     },
     checkboxLabel: {
         fontSize: 16,
+        color: '#555',
     },
     separatorContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        width: '80%',
+        width: '100%',
         marginVertical: 20,
     },
     separatorLine: {
@@ -143,6 +166,20 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#555',
         marginHorizontal: 10,
+    },
+    button: {
+        backgroundColor: '#367CFF',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        alignItems: 'center',
+        width: '100%',
+        marginVertical: 5,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });
 
