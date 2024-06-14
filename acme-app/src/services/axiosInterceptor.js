@@ -3,6 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { reset } from '../navigation/RootNavigation';
 
+import { getSessionForRequest } from '../hooks/useSession';
+
 const API_URL = 'http://192.168.15.156:8080';
 
 const api = axios.create({
@@ -11,9 +13,10 @@ const api = axios.create({
 
 api.interceptors.request.use(
     async (config) => {
-        const token = await AsyncStorage.getItem('userToken');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        const session = await getSessionForRequest();
+
+        if (session && session.jwtToken) {
+            config.headers.Authorization = `Bearer ${session.jwtToken}`;
         }
         return config;
     },
@@ -27,7 +30,8 @@ api.interceptors.response.use(
     async error => {
         const { response } = error;
         if (response.status === 401) {
-            await AsyncStorage.removeItem('userToken');
+            await AsyncStorage.removeItem('session');
+            
             Alert.alert('Sessão expirada', 'Por favor, faça login novamente.');
             reset({
                 index: 0,

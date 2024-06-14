@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { getUserProfile, updateUserProfile } from '../services/userService';
+import useSession from '../hooks/useSession';
 
 const EditProfileScreen = ({ navigation }) => {
+    const { deleteSession } = useSession();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -71,6 +73,10 @@ const EditProfileScreen = ({ navigation }) => {
                 <Text>Carregando...</Text>
             </View>
         );
+    }
+
+    const logout = async () => {
+        await deleteSession();
     }
 
     return (
@@ -204,6 +210,10 @@ const EditProfileScreen = ({ navigation }) => {
             <TouchableOpacity style={styles.button} onPress={handleUpdate}>
                 <Text style={styles.buttonText}>Atualizar</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+                <Text style={styles.buttonText}>Sair</Text>
+            </TouchableOpacity>
         </ScrollView>
     );
 };
@@ -245,6 +255,13 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: '#367CFF',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    logoutButton: {
+        backgroundColor: 'red',
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',

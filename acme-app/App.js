@@ -11,49 +11,67 @@ import CreateTicketScreen from './src/screens/CreateTicketScreen';
 import QrCodeScannerScreen from './src/screens/QrCodeScannerScreen';
 import { navigationRef } from './src/navigation/RootNavigation';
 
-const Stack = createStackNavigator();
+import { UserProvider } from './src/contexts/UserContext';
+import Main from './src/navigation/Main';
+
+// const Stack = createStackNavigator();
+
+// export default function App() {
+//     const [isLoading, setIsLoading] = useState(true);
+//     const [userToken, setUserToken] = useState(null);
+
+//     // token -> 403 -> deslogar -> redireciona ele /login
+//     // token -> 200 -> ele permance 
+
+//     // { data, createdAt }
+
+//     // 
+
+//     useEffect(() => {
+//         const checkToken = async () => {
+//             const token = await AsyncStorage.getItem('userToken');
+//             if (token) {
+//                 try {
+//                     const decoded = jwt_decode(token);
+//                     const currentTime = Date.now() / 1000;
+//                     if (decoded.exp < currentTime) {
+//                         await AsyncStorage.removeItem('userToken');
+//                         setUserToken(null);
+//                     } else {
+//                         setUserToken(token);
+//                     }
+//                 } catch (e) {
+//                     await AsyncStorage.removeItem('userToken');
+//                     setUserToken(null);
+//                 }
+//             }
+//             setIsLoading(false);
+//         };
+//         checkToken();
+//     }, []);
+
+//     if (isLoading) {
+//         return null;
+//     }
+
+//     return (
+//         <NavigationContainer ref={navigationRef}>
+//             <Stack.Navigator initialRouteName={userToken ? 'Main' : 'Login'}>
+//                 <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+//                 <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
+//                 <Stack.Screen name="BaggageDetails" component={BaggageDetailsScreen} options={{ headerShown: false }} />
+//                 <Stack.Screen name="TicketDetails" component={TicketDetailsScreen} options={{ headerShown: false }} />
+//                 <Stack.Screen name="CreateTicket" component={CreateTicketScreen} options={{ headerShown: false }} />
+//                 <Stack.Screen name="QrCodeScanner" component={QrCodeScannerScreen} options={{ headerShown: false }} />
+//             </Stack.Navigator>
+//         </NavigationContainer>
+//     );
+// }
 
 export default function App() {
-    const [isLoading, setIsLoading] = useState(true);
-    const [userToken, setUserToken] = useState(null);
-
-    useEffect(() => {
-        const checkToken = async () => {
-            const token = await AsyncStorage.getItem('userToken');
-            if (token) {
-                try {
-                    const decoded = jwt_decode(token);
-                    const currentTime = Date.now() / 1000;
-                    if (decoded.exp < currentTime) {
-                        await AsyncStorage.removeItem('userToken');
-                        setUserToken(null);
-                    } else {
-                        setUserToken(token);
-                    }
-                } catch (e) {
-                    await AsyncStorage.removeItem('userToken');
-                    setUserToken(null);
-                }
-            }
-            setIsLoading(false);
-        };
-        checkToken();
-    }, []);
-
-    if (isLoading) {
-        return null;
-    }
-
     return (
-        <NavigationContainer ref={navigationRef}>
-            <Stack.Navigator initialRouteName={userToken ? 'Main' : 'Login'}>
-                <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
-                <Stack.Screen name="BaggageDetails" component={BaggageDetailsScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="TicketDetails" component={TicketDetailsScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="CreateTicket" component={CreateTicketScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="QrCodeScanner" component={QrCodeScannerScreen} options={{ headerShown: false }} />
-            </Stack.Navigator>
-        </NavigationContainer>
-    );
+        <UserProvider>
+            <Main />
+        </UserProvider>
+    )   
 }
