@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { getUserProfile, updateUserProfile } from '../services/userService';
 import useSession from '../hooks/useSession';
 
@@ -70,7 +70,7 @@ const EditProfileScreen = ({ navigation }) => {
     if (loading) {
         return (
             <View style={styles.container}>
-                <Text>Carregando...</Text>
+                <ActivityIndicator size="large" color="#0000ff" />
             </View>
         );
     }
