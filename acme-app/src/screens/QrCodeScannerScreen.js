@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Text, View, StyleSheet, Button, Alert, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Text, View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { getBaggageByTag, updateBaggageWithTracker } from '../services/baggageService';
@@ -9,6 +9,7 @@ const QrCodeScannerScreen = ({ navigation }) => {
     const [facing, setFacing] = useState('back');
     const [permission, requestPermission] = useCameraPermissions();
     const [scanned, setScanned] = useState(false);
+    const [flash, setFlash] = useState(false);
     const { user } = useUserContext();
 
     if (!permission) {
@@ -19,7 +20,9 @@ const QrCodeScannerScreen = ({ navigation }) => {
         return (
             <View style={styles.container}>
                 <Text style={{ textAlign: 'center' }}>Precisamos da sua permissão para acessar a câmera</Text>
-                <Button onPress={requestPermission} title="Conceder permissão" />
+                <TouchableOpacity onPress={requestPermission}>
+                    <Text style={styles.permissionButtonText}>Conceder permissão</Text>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -46,6 +49,10 @@ const QrCodeScannerScreen = ({ navigation }) => {
         }
     };
 
+    const toggleFlash = () => {
+        setFlash(!flash);
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -59,12 +66,19 @@ const QrCodeScannerScreen = ({ navigation }) => {
                     <CameraView
                         style={styles.camera}
                         facing={facing}
+                        enableTorch={flash}
                         onBarcodeScanned={handleBarCodeScanned}
                         barcodeScannerSettings={{
                             barcodeTypes: ['qr'],
                         }}
                     />
                 </View>
+                <TouchableOpacity style={styles.flashButton} onPress={toggleFlash}>
+                    <Icon name={flash ? "lightbulb-o" : "lightbulb-o"} size={24} color="#fff" />
+                    <Text style={styles.flashButtonText}>
+                        {flash ? 'Desativar Flash' : 'Ativar Flash'}
+                    </Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -110,6 +124,19 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
         marginTop: 20,
+    },
+    flashButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#367CFF',
+        padding: 10,
+        borderRadius: 5,
+        marginTop: 20,
+    },
+    flashButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        marginLeft: 10,
     },
 });
 
