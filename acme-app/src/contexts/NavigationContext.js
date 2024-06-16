@@ -1,9 +1,5 @@
-import { createContext, useContext, useRef } from 'react'; 
-
-import { useUserContext } from './UserContext';
-
+import React, { createContext, useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-
 import { navigationRef } from '../navigation/RootNavigation';
 
 const NavigationContext = createContext({
@@ -12,7 +8,6 @@ const NavigationContext = createContext({
 });
 
 export function NavigationProvider({ children }) {
-    const { isLogged } = useUserContext();
     
     const navigate = (name, params) => {
         if (!navigationRef.current) {
@@ -20,13 +15,8 @@ export function NavigationProvider({ children }) {
             return;
         }
 
-        if (!isLogged()) {
-            //aqui vc pode fazer uma logica pra caso o cara nao esteja logado
-            //e tente forcar navegacao
-        }
-
         navigationRef.current.navigate(name, params);
-    }
+    };
 
     const reset = (routes) => {
         if (!navigationRef.current) {
@@ -35,24 +25,18 @@ export function NavigationProvider({ children }) {
         }
 
         navigationRef.current.reset(routes);
-    } 
-    
+    };
+
     return (
-        <NavigationContext.Provider
-            value={{
-                navigate,
-                reset
-            }}
-        >
+        <NavigationContext.Provider value={{ navigate, reset }}>
             <NavigationContainer ref={navigationRef}>
                 {children}
             </NavigationContainer>
         </NavigationContext.Provider>
-    )
+    );
 }
 
-export function useNavigationContext() { 
+export function useNavigationContext() {
     const context = useContext(NavigationContext);
-
     return context;
 }

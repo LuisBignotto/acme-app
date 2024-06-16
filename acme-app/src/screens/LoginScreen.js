@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { login } from '../services/userService';
-
 import useSession from '../hooks/useSession';
-
 
 const LoginScreen = ({ navigation }) => {
     const { createSession } = useSession();
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -18,9 +14,7 @@ const LoginScreen = ({ navigation }) => {
         if (email && password) {
             try {
                 const data = await login(email, password);
-
-                await createSession(null, data.token, null);
-
+                await createSession(data.id, data.token, data.role);
                 Alert.alert('Login bem-sucedido');
                 navigation.navigate('Main');
             } catch (error) {

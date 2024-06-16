@@ -1,5 +1,4 @@
 import api from './axiosInterceptor';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const login = async (email, password) => {
     try {
@@ -21,7 +20,7 @@ export const getUserProfile = async () => {
 
 export const updateUserProfile = async (userId, updatedData) => {
     try {
-        await api.put(`/${userId}`, updatedData);
+        await api.put(`/user-ms/users/${userId}`, updatedData);
     } catch (error) {
         throw new Error(error.response?.data?.message || 'Erro ao atualizar perfil do usuário');
     }

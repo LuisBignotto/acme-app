@@ -1,77 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwt_decode from 'jwt-decode';
-import LoginScreen from './src/screens/LoginScreen';
-import TabNavigator from './src/navigation/TabNavigator';
-import BaggageDetailsScreen from './src/screens/BaggageDetailsScreen';
-import TicketDetailsScreen from './src/screens/TicketDetailsScreen';
-import CreateTicketScreen from './src/screens/CreateTicketScreen';
-import QrCodeScannerScreen from './src/screens/QrCodeScannerScreen';
-import { navigationRef } from './src/navigation/RootNavigation';
-
+import React from 'react';
 import { UserProvider } from './src/contexts/UserContext';
-import Main from './src/navigation/Main';
-
-// const Stack = createStackNavigator();
-
-// export default function App() {
-//     const [isLoading, setIsLoading] = useState(true);
-//     const [userToken, setUserToken] = useState(null);
-
-//     // token -> 403 -> deslogar -> redireciona ele /login
-//     // token -> 200 -> ele permance 
-
-//     // { data, createdAt }
-
-//     // 
-
-//     useEffect(() => {
-//         const checkToken = async () => {
-//             const token = await AsyncStorage.getItem('userToken');
-//             if (token) {
-//                 try {
-//                     const decoded = jwt_decode(token);
-//                     const currentTime = Date.now() / 1000;
-//                     if (decoded.exp < currentTime) {
-//                         await AsyncStorage.removeItem('userToken');
-//                         setUserToken(null);
-//                     } else {
-//                         setUserToken(token);
-//                     }
-//                 } catch (e) {
-//                     await AsyncStorage.removeItem('userToken');
-//                     setUserToken(null);
-//                 }
-//             }
-//             setIsLoading(false);
-//         };
-//         checkToken();
-//     }, []);
-
-//     if (isLoading) {
-//         return null;
-//     }
-
-//     return (
-//         <NavigationContainer ref={navigationRef}>
-//             <Stack.Navigator initialRouteName={userToken ? 'Main' : 'Login'}>
-//                 <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-//                 <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
-//                 <Stack.Screen name="BaggageDetails" component={BaggageDetailsScreen} options={{ headerShown: false }} />
-//                 <Stack.Screen name="TicketDetails" component={TicketDetailsScreen} options={{ headerShown: false }} />
-//                 <Stack.Screen name="CreateTicket" component={CreateTicketScreen} options={{ headerShown: false }} />
-//                 <Stack.Screen name="QrCodeScanner" component={QrCodeScannerScreen} options={{ headerShown: false }} />
-//             </Stack.Navigator>
-//         </NavigationContainer>
-//     );
-// }
+import { NavigationProvider } from './src/contexts/NavigationContext';
+import AppNavigator from './src/navigation/AppNavigator';
 
 export default function App() {
     return (
         <UserProvider>
-            <Main />
+            <NavigationProvider>
+                <AppNavigator />
+            </NavigationProvider>
         </UserProvider>
-    )   
+    );
 }
