@@ -28,6 +28,7 @@ const TabNavigator = () => {
                 tabBarActiveTintColor: '#367CFF',
                 tabBarInactiveTintColor: 'gray',
                 headerShown: false,
+                tabBarShowLabel: false
             })}
         >
             <Tab.Screen name="Profile" component={ProfileScreen} />
