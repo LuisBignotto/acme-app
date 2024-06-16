@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { getUserTickets } from '../services/ticketService';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import TicketItem from '../components/TicketItem';
 import FaqItem from '../components/FaqItem';
+import { useUserContext } from '../contexts/UserContext';
 
 const SupportScreen = ({ navigation }) => {
+    const { user } = useUserContext();
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -13,14 +14,8 @@ const SupportScreen = ({ navigation }) => {
     useEffect(() => {
         const fetchTickets = async () => {
             try {
-                const userId = await AsyncStorage.getItem('userId');
-                const parsedUserId = parseInt(userId, 10); 
-                if (!isNaN(parsedUserId)) {
-                    const data = await getUserTickets(parsedUserId);
-                    setTickets(data);
-                } else {
-                    throw new Error('ID do usuário inválido');
-                }
+                const data = await getUserTickets(user.userId);
+                setTickets(data);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -29,7 +24,7 @@ const SupportScreen = ({ navigation }) => {
         };
 
         fetchTickets();
-    }, []);
+    }, [user.userId]);
 
     const handleCreateTicket = () => {
         navigation.navigate('CreateTicket');

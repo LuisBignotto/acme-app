@@ -1,35 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CheckBox from 'expo-checkbox';
-import Button from '../components/Button';
 import { getBaggageByTag, updateBaggageWithTracker } from '../services/baggageService';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUserContext } from '../contexts/UserContext';
 
 const SearchScreen = ({ navigation }) => {
+    const { user } = useUserContext();
     const [tag, setTag] = useState('');
     const [keepTrack, setKeepTrack] = useState(false);
-    const [loggedUserId, setLoggedUserId] = useState(null);
-
-    useEffect(() => {
-        const fetchUserId = async () => {
-            const userId = await AsyncStorage.getItem('userId');
-            setLoggedUserId(Number(userId));
-        };
-
-        fetchUserId();
-    }, []);
 
     const handleSearch = async () => {
         try {
             const baggage = await getBaggageByTag(tag);
 
-            if (keepTrack && baggage.userId !== loggedUserId) {
+            if (keepTrack && baggage.userId !== user.userId) {
                 const updatedBaggage = {
                     ...baggage,
                     trackers: [
                         ...baggage.trackers,
-                        { trackerUserId: loggedUserId }
+                        { trackerUserId: user.userId }
                     ]
                 };
                 await updateBaggageWithTracker(baggage.id, updatedBaggage);
@@ -113,12 +103,6 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         color: '#367CFF',
-    },
-    description: {
-        fontSize: 16,
-        color: '#555',
-        marginBottom: 20,
-        textAlign: 'center',
     },
     inputContainer: {
         width: '100%',

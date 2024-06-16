@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { getUserProfile, updateUserProfile } from '../services/userService';
-import useSession from '../hooks/useSession';
+import { useUserContext } from '../contexts/UserContext';
 
 const EditProfileScreen = ({ navigation }) => {
-    const { deleteSession } = useSession();
+    const { user, isLoading: userLoading } = useUserContext();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -20,7 +20,6 @@ const EditProfileScreen = ({ navigation }) => {
         state: ''
     });
     const [loading, setLoading] = useState(true);
-    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -30,7 +29,6 @@ const EditProfileScreen = ({ navigation }) => {
                 setEmail(data.email);
                 setPhone(data.phone);
                 setAddress(data.address);
-                setUserId(data.id);
             } catch (error) {
                 Alert.alert('Erro', error.message);
             } finally {
@@ -38,8 +36,10 @@ const EditProfileScreen = ({ navigation }) => {
             }
         };
 
-        fetchUserProfile();
-    }, []);
+        if (!userLoading) {
+            fetchUserProfile();
+        }
+    }, [userLoading]);
 
     const handleUpdate = async () => {
         if (password !== confirmPassword) {
@@ -54,12 +54,13 @@ const EditProfileScreen = ({ navigation }) => {
 
         try {
             const updatedData = {
+                name,
                 email,
                 phone,
                 password,
                 address,
             };
-            await updateUserProfile(userId, updatedData);
+            await updateUserProfile(user.userId, updatedData);
             Alert.alert('Sucesso', 'Perfil atualizado com sucesso!');
             navigation.navigate('Profile');
         } catch (error) {
@@ -67,7 +68,7 @@ const EditProfileScreen = ({ navigation }) => {
         }
     };
 
-    if (loading) {
+    if (loading || userLoading) {
         return (
             <View style={styles.container}>
                 <ActivityIndicator size="large" color="#0000ff" />
@@ -77,7 +78,8 @@ const EditProfileScreen = ({ navigation }) => {
 
     const logout = async () => {
         await deleteSession();
-    }
+        navigation.navigate('Login');
+    };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>

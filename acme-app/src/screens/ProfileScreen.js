@@ -3,10 +3,11 @@ import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity
 import { useFocusEffect } from '@react-navigation/native';
 import { getUserProfile } from '../services/userService';
 import { getBaggagesTrackedByUser } from '../services/baggageService';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import BaggageItem from '../components/BaggageItem';
+import { useUserContext } from '../contexts/UserContext';
 
 const ProfileScreen = ({ navigation }) => {
+    const { user } = useUserContext();
     const [userData, setUserData] = useState(null);
     const [trackedBaggages, setTrackedBaggages] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -15,7 +16,6 @@ const ProfileScreen = ({ navigation }) => {
     const fetchUserProfile = async () => {
         try {
             const data = await getUserProfile();
-            await AsyncStorage.setItem('userId', String(data.id));
             setUserData(data);
         } catch (error) {
             setError(error.message);
@@ -24,8 +24,7 @@ const ProfileScreen = ({ navigation }) => {
 
     const fetchTrackedBaggages = async () => {
         try {
-            const userId = await AsyncStorage.getItem('userId');
-            const data = await getBaggagesTrackedByUser(userId);
+            const data = await getBaggagesTrackedByUser(user.userId);
             setTrackedBaggages(data);
         } catch (error) {
             setError(error.message);
@@ -34,9 +33,14 @@ const ProfileScreen = ({ navigation }) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            setLoading(true);
-            fetchUserProfile().finally(() => setLoading(false));
-            fetchTrackedBaggages().finally(() => setLoading(false));
+            const loadData = async () => {
+                setLoading(true);
+                await fetchUserProfile();
+                await fetchTrackedBaggages();
+                setLoading(false);
+            };
+
+            loadData();
         }, [])
     );
 

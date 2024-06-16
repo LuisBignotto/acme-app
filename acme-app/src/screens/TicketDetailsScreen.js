@@ -3,20 +3,18 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert 
 import { getMessagesByTicketId, addMessage } from '../services/ticketService';
 import MessageItem from '../components/MessageItem';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUserContext } from '../contexts/UserContext';
 
 const TicketDetailsScreen = ({ route, navigation }) => {
     const { ticket } = route.params;
+    const { user } = useUserContext();
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [newMessage, setNewMessage] = useState('');
-    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
         const fetchMessages = async () => {
             try {
-                const id = await AsyncStorage.getItem('userId');
-                setUserId(id);
                 const data = await getMessagesByTicketId(ticket.id);
                 setMessages(data);
             } catch (error) {
@@ -36,7 +34,7 @@ const TicketDetailsScreen = ({ route, navigation }) => {
         }
 
         try {
-            const message = { message: newMessage, senderId: userId };
+            const message = { message: newMessage, senderId: user.userId };
             await addMessage(ticket.id, message);
             setMessages([...messages, message]);
             setNewMessage('');
@@ -57,7 +55,7 @@ const TicketDetailsScreen = ({ route, navigation }) => {
                     <MessageItem
                         key={index}
                         message={message}
-                        isMine={message.senderId == userId}
+                        isMine={message.senderId == user.userId}
                     />
                 ))}
             </ScrollView>
@@ -87,12 +85,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 30,
         marginBottom: 20,
-    },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#367CFF',
-        marginLeft: 10,
     },
     messageContainer: {
         flex: 1,

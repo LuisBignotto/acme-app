@@ -1,7 +1,9 @@
+// src/screens/QrCodeScannerScreen.js
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button, Alert, TouchableOpacity } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { getBaggageById, getBaggageByTag, updateBaggageWithTracker } from '../services/baggageService';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { getBaggageByTag, updateBaggageWithTracker } from '../services/baggageService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const QrCodeScannerScreen = ({ navigation }) => {
@@ -56,15 +58,24 @@ const QrCodeScannerScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <CameraView
-                style={styles.camera}
-                facing={facing}
-                onBarcodeScanned={handleBarCodeScanned}
-                barcodeScannerSettings={{
-                    barcodeTypes: ['qr'],
-                }}
-            >
-            </CameraView>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Icon name="arrow-left" size={24} color="#367CFF" />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Leitor de QR Code</Text>
+            </View>
+            <View style={styles.cameraContainer}>
+                <View style={styles.cameraBox}>
+                    <CameraView
+                        style={styles.camera}
+                        facing={facing}
+                        onBarcodeScanned={handleBarCodeScanned}
+                        barcodeScannerSettings={{
+                            barcodeTypes: ['qr'],
+                        }}
+                    />
+                </View>
+            </View>
         </View>
     );
 };
@@ -72,13 +83,44 @@ const QrCodeScannerScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#fff',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        backgroundColor: '#fff',
+        marginTop: 30,
+    },
+    headerTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#367CFF',
+        marginLeft: 10,
+    },
+    cameraContainer: {
+        flex: 1,
         justifyContent: 'center',
-        maxWidth: 400,
-        maxHeight: 400,
+        alignItems: 'center',
+    },
+    cameraBox: {
+        width: 300,
+        height: 300,
+        borderRadius: 10,
+        overflow: 'hidden',
+        backgroundColor: '#000',
     },
     camera: {
-        flex: 1,
-    }
+        width: '100%',
+        height: '100%',
+    },
+    permissionButtonText: {
+        color: '#367CFF',
+        fontSize: 16,
+        textAlign: 'center',
+        marginTop: 20,
+    },
 });
 
 export default QrCodeScannerScreen;
