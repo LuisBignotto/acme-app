@@ -54,7 +54,6 @@ const BaggageDetailsScreen = ({ route, navigation }) => {
             </TouchableOpacity>
             <Text style={styles.title}>Detalhes da Bagagem</Text>
             <View style={styles.detailContainer}>
-                <Text style={styles.detailTitle}>Informações da Bagagem:</Text>
                 <View style={styles.detailItem}>
                     <Icon name="tag" size={18} color="#367CFF" style={styles.detailIcon} />
                     <Text style={styles.detailText}> Tag: {baggage.tag}</Text>

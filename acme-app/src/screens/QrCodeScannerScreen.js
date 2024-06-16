@@ -1,25 +1,15 @@
-// src/screens/QrCodeScannerScreen.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Text, View, StyleSheet, Button, Alert, TouchableOpacity } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { getBaggageByTag, updateBaggageWithTracker } from '../services/baggageService';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUserContext } from '../contexts/UserContext';
 
 const QrCodeScannerScreen = ({ navigation }) => {
     const [facing, setFacing] = useState('back');
     const [permission, requestPermission] = useCameraPermissions();
     const [scanned, setScanned] = useState(false);
-    const [loggedUserId, setLoggedUserId] = useState(null);
-
-    useEffect(() => {
-        const fetchUserId = async () => {
-            const userId = await AsyncStorage.getItem('userId');
-            setLoggedUserId(Number(userId));
-        };
-
-        fetchUserId();
-    }, []);
+    const { user } = useUserContext();
 
     if (!permission) {
         return <View />;
@@ -40,12 +30,12 @@ const QrCodeScannerScreen = ({ navigation }) => {
         setScanned(true);
         try {
             const baggage = await getBaggageByTag(data);
-            if (baggage.userId !== loggedUserId) {
+            if (baggage.userId !== user.userId) {
                 const updatedBaggage = {
                     ...baggage,
                     trackers: [
                         ...baggage.trackers,
-                        { trackerUserId: loggedUserId }
+                        { trackerUserId: user.userId }
                     ]
                 };
                 await updateBaggageWithTracker(baggage.id, updatedBaggage);
@@ -105,8 +95,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     cameraBox: {
-        width: 300,
-        height: 300,
+        width: 350,
+        height: 450,
         borderRadius: 10,
         overflow: 'hidden',
         backgroundColor: '#000',
