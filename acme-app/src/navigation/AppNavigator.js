@@ -3,6 +3,7 @@ import { View, ActivityIndicator } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useUserContext } from '../contexts/UserContext';
 import LoginScreen from '../screens/LoginScreen';
+import RegisterScreen from '../screens/RegisterScreen';
 import TabNavigator from './TabNavigator';
 import BaggageDetailsScreen from '../screens/BaggageDetailsScreen';
 import TicketDetailsScreen from '../screens/TicketDetailsScreen';
@@ -26,6 +27,7 @@ const AppNavigator = () => {
         <Stack.Navigator initialRouteName={user.jwtToken ? 'Main' : 'Login'}>
             <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
             <Stack.Screen name="BaggageDetails" component={BaggageDetailsScreen} options={{ headerShown: false }} />
             <Stack.Screen name="TicketDetails" component={TicketDetailsScreen} options={{ headerShown: false }} />
             <Stack.Screen name="CreateTicket" component={CreateTicketScreen} options={{ headerShown: false }} />

@@ -9,6 +9,15 @@ export const login = async (email, password) => {
     }
 };
 
+export const register = async (email, cpf, name, password) => {
+    try {
+        const response = await api.post('/user-ms/users/register', { email, cpf, name, password });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Erro ao fazer login');
+    }
+};
+
 export const getUserProfile = async () => {
     try {
         const response = await api.get('/user-ms/users/me');

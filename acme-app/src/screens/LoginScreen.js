@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { login } from '../services/userService';
@@ -44,7 +44,9 @@ const LoginScreen = ({ navigation }) => {
             <Button title="Entrar" onPress={handleLogin} />
             <View style={styles.registerContainer}>
                 <Text style={styles.notRegisterText}>Não possui cadastro?</Text>
-                <Text style={styles.registerText}> Cadastre-se</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                    <Text style={styles.registerText}> Cadastre-se</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -77,7 +79,7 @@ const styles = StyleSheet.create({
     },
     registerText: {
         fontSize: 12,
-        color: "#A1BBFF"
+        color: "#A1BBFF",
     }
 });
 
