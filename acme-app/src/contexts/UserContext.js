@@ -29,12 +29,9 @@ export function UserProvider({ children }) {
         const getUserData = async () => {
             const data = await getSession();
 
-            if (!data) {
-                setIsLoading(false);
-                return;
+            if (data) {
+                setUser(data);
             }
-
-            setUser(data);
             setIsLoading(false);
         };
 
