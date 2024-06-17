@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { getUserProfile, updateUserProfile } from '../services/userService';
 import { useUserContext } from '../contexts/UserContext';
+import useSession from '../hooks/useSession';
 
 const EditProfileScreen = ({ navigation }) => {
     const { user, isLoading: userLoading } = useUserContext();
+    const { deleteSession } = useSession();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
     const [address, setAddress] = useState({
         street: '',
         neighborhood: '',
@@ -28,7 +29,15 @@ const EditProfileScreen = ({ navigation }) => {
                 setName(data.name);
                 setEmail(data.email);
                 setPhone(data.phone);
-                setAddress(data.address);
+                setAddress(data.address || {
+                    street: '',
+                    neighborhood: '',
+                    zipcode: '',
+                    number: '',
+                    complement: '',
+                    city: '',
+                    state: ''
+                });
             } catch (error) {
                 Alert.alert('Erro', error.message);
             } finally {
@@ -42,11 +51,6 @@ const EditProfileScreen = ({ navigation }) => {
     }, [userLoading]);
 
     const handleUpdate = async () => {
-        if (password !== confirmPassword) {
-            Alert.alert('Erro', 'As senhas não coincidem');
-            return;
-        }
-
         if (password && password.length < 8) {
             Alert.alert('Erro', 'A senha deve ter pelo menos 8 caracteres');
             return;
@@ -78,7 +82,6 @@ const EditProfileScreen = ({ navigation }) => {
 
     const logout = async () => {
         await deleteSession();
-        navigation.navigate('Login');
     };
 
     return (
@@ -123,17 +126,6 @@ const EditProfileScreen = ({ navigation }) => {
                     secureTextEntry
                     value={password}
                     onChangeText={setPassword}
-                />
-            </View>
-
-            <View style={styles.section}>
-                <Text style={styles.label}>Confirmar Senha</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Confirmar Senha"
-                    secureTextEntry
-                    value={confirmPassword}
-                    onChangeText={setConfirmPassword}
                 />
             </View>
 

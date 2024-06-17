@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigationContext } from '../contexts/NavigationContext';
 
 const DEFAULT_EXPIRATION_TIME_IN_MINUTES = 30*2*24; 
 
@@ -15,6 +16,8 @@ export const getSessionForRequest = async () => {
 };   
 
 function useSession() {
+    const { reset } = useNavigationContext();
+    
     const generateCreatedAt = () => {
         const now = new Date();
         now.setMinutes(now.getMinutes() + DEFAULT_EXPIRATION_TIME_IN_MINUTES);
@@ -66,6 +69,10 @@ function useSession() {
 
     const deleteSession = async () =>{
         await AsyncStorage.removeItem('session');
+        reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+        });
     }
 
     return {
