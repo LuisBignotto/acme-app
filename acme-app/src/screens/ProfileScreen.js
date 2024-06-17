@@ -71,7 +71,7 @@ const ProfileScreen = ({ navigation }) => {
                 <Text style={styles.baggageTitle}>Suas Bagagens</Text>
                 {userData && userData.baggages.length === 0 ? (
                     <View style={styles.noBaggage}>
-                        <Text>Você ainda não possui nenhuma mala</Text>
+                        <Text style={styles.noBaggageTxt}>Você não possui nenhuma bagagem.</Text>
                     </View>
                 ) : (
                     userData && userData.baggages.map((baggage, index) => (
@@ -140,9 +140,14 @@ const styles = StyleSheet.create({
     },
     noBaggage: {
         alignItems: 'center',
-        backgroundColor: '#636363',
+        backgroundColor: '#E8F0FE',
         padding: 20,
         borderRadius: 10,
+        color: '#367CFF',
+    },
+    noBaggageTxt: {
+        fontSize: 12,
+        color: '#3E3E3E',
     },
     helpContainer: {
         width: '100%',
