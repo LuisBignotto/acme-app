@@ -22,9 +22,9 @@ const ProfileScreen = ({ navigation }) => {
         }
     };
 
-    const fetchTrackedBaggages = async () => {
+    const fetchTrackedBaggages = async (userId) => {
         try {
-            const data = await getBaggagesTrackedByUser(userData.id);
+            const data = await getBaggagesTrackedByUser(userId);
             setTrackedBaggages(data);
         } catch (error) {
             setError(error.message);
@@ -36,7 +36,6 @@ const ProfileScreen = ({ navigation }) => {
             const loadData = async () => {
                 setLoading(true);
                 await fetchUserProfile();
-                await fetchTrackedBaggages();
                 setLoading(false);
             };
 
@@ -44,10 +43,25 @@ const ProfileScreen = ({ navigation }) => {
         }, [user.userId])
     );
 
+    useEffect(() => {
+        if (userData && userData.id) {
+            fetchTrackedBaggages(userData.id);
+        }
+    }, [userData]);
+
     if (loading) {
         return (
             <View style={styles.container}>
                 <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
+
+    if (error) {
+        console.log(error);
+        return (
+            <View style={styles.container}>
+                <Text style={styles.errorText}>{error}</Text>
             </View>
         );
     }
@@ -61,7 +75,7 @@ const ProfileScreen = ({ navigation }) => {
             </View>
             <View style={styles.mainContainer}>
                 <Text style={styles.baggageTitle}>Suas Bagagens</Text>
-                {userData && userData.baggages.length == 0 ? (
+                {userData && userData.baggages.length === 0 ? (
                     <View style={styles.noBaggage}>
                         <Text style={styles.noBaggageTxt}>Você não possui nenhuma bagagem.</Text>
                     </View>
