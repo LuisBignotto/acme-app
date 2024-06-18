@@ -4,7 +4,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { useUserContext } from '../contexts/UserContext';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
-import TabNavigator from './TabNavigator';
+import UserTabNavigator from './UserTabNavigator';
+import BaggageTabNavigator from './BaggageTabNavigator';
 import BaggageDetailsScreen from '../screens/BaggageDetailsScreen';
 import TicketDetailsScreen from '../screens/TicketDetailsScreen';
 import CreateTicketScreen from '../screens/CreateTicketScreen';
@@ -24,10 +25,11 @@ const AppNavigator = () => {
     }
 
     return (
-        <Stack.Navigator initialRouteName={user.jwtToken ? 'Main' : 'Login'}>
+        <Stack.Navigator initialRouteName={user.jwtToken ? (user.role == 3 ? 'BaggageMain' : 'UserMain') : 'Login'}>
             <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
             <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="UserMain" component={UserTabNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name="BaggageMain" component={BaggageTabNavigator} options={{ headerShown: false }} />
             <Stack.Screen name="BaggageDetails" component={BaggageDetailsScreen} options={{ headerShown: false }} />
             <Stack.Screen name="TicketDetails" component={TicketDetailsScreen} options={{ headerShown: false }} />
             <Stack.Screen name="CreateTicket" component={CreateTicketScreen} options={{ headerShown: false }} />

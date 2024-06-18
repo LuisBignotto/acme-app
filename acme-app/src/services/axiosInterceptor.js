@@ -27,7 +27,7 @@ api.interceptors.response.use(
     response => response,
     async error => {
         const { response } = error;
-        if (response.status === 401) {
+        if (response && response.status === 401) {
             await AsyncStorage.removeItem('session');
             Alert.alert('Sessão expirada', 'Por favor, faça login novamente.');
             reset({

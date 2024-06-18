@@ -11,17 +11,24 @@ const LoginScreen = ({ navigation }) => {
     const [password, setPassword] = useState('');
 
     const handleLogin = async () => {
-        if (email && password) {
-            try {
-                const data = await login(email, password);
-                await createSession(data.id, data.token, data.role);
-                Alert.alert('Login bem-sucedido');
-                navigation.navigate('Main');
-            } catch (error) {
-                Alert.alert("Erro ao efetuar o login, tente novamente mais tarde.");
-            }
-        } else {
+        if (!email || !password) {
             Alert.alert('Por favor, preencha ambos os campos');
+            return;
+        }
+
+        try {
+            const data = await login(email, password);
+            if (!data?.id || !data?.token || !data?.role) {
+                throw new Error('Dados de login inválidos');
+            }
+
+            await createSession(Number(data.id), data.token, Number(data.role));
+            Alert.alert('Login bem-sucedido');
+
+            const targetScreen = Number(data.role) == 3 ? 'BaggageMain' : 'UserMain';
+            navigation.navigate(targetScreen);
+        } catch (error) {
+            Alert.alert('Erro ao efetuar o login, tente novamente mais tarde.');
         }
     };
 

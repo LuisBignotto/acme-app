@@ -38,3 +38,20 @@ export const getBaggagesTrackedByUser = async (userId) => {
         throw new Error(error.response?.data?.message || 'Erro ao buscar bagagens rastreadas pelo usuário');
     }
 };
+
+export const getAllBaggages = async () => {
+    try {
+        const response = await api.get('/baggage-ms/baggages');
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Erro ao buscar bagagens');
+    }
+};
+
+export const updateBaggageStatus = async (baggageId, status) => {
+    try {
+        await api.put(`/baggage-ms/baggages/${baggageId}/status`, { status });
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Erro ao atualizar status da bagagem');
+    }
+};

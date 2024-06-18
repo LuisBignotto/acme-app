@@ -28,13 +28,11 @@ export function UserProvider({ children }) {
     useEffect(() => {
         const getUserData = async () => {
             const data = await getSession();
-
             if (data) {
                 setUser(data);
             }
             setIsLoading(false);
         };
-
         getUserData();
     }, []);
 

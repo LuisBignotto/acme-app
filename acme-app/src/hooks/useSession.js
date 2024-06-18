@@ -1,17 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigationContext } from '../contexts/NavigationContext';
 
-const DEFAULT_EXPIRATION_TIME_IN_MINUTES = 30*2*24; 
+const DEFAULT_EXPIRATION_TIME_IN_MINUTES = 30 * 2 * 24; 
 
 export const getSessionForRequest = async () => {
     const jsonData = await AsyncStorage.getItem('session');
-
     if (!jsonData) {
         return null;
     }
-
     const data = JSON.parse(jsonData);
-
     return data;
 };   
 
@@ -22,34 +19,29 @@ function useSession() {
         const now = new Date();
         now.setMinutes(now.getMinutes() + DEFAULT_EXPIRATION_TIME_IN_MINUTES);
         return Math.floor(now.getTime() / 1000); 
-    }
+    };
 
     const isSessionValid = async (createdAt) => {
         const currentTimestamp = Math.floor(Date.now() / 1000);
-
         if (currentTimestamp >= createdAt) {
             await AsyncStorage.removeItem('session');
             return false;
         }
-
         return true;
-    }
+    };
 
     const getSession = async () => {
         const jsonData = await AsyncStorage.getItem('session');
-    
         if (!jsonData) {
             return null;
         }
-
         const data = JSON.parse(jsonData);
         if (!(await isSessionValid(data.createdAt))) {
             await AsyncStorage.removeItem('session');
             return null;
         }
-
         return data;
-    }   
+    };   
 
     const createSession = async (userId, jwtToken, roleId) => {
         try {
@@ -57,30 +49,30 @@ function useSession() {
                 'session',
                 JSON.stringify({
                     createdAt: generateCreatedAt(),
-                    userId,
+                    userId: Number(userId),
                     jwtToken,
-                    roleId
+                    roleId: Number(roleId)
                 })
             );
         } catch (error) {
-            console.error(`Ocorreu um erro ao criar a sessao: ${error}`);
+            console.error(`Ocorreu um erro ao criar a sessão: ${error}`);
         }
-    }
+    };
 
-    const deleteSession = async () =>{
+    const deleteSession = async () => {
         await AsyncStorage.removeItem('session');
         reset({
             index: 0,
             routes: [{ name: 'Login' }],
         });
-    }
+    };
 
     return {
         isSessionValid,
         getSession,
         createSession,
         deleteSession
-    }
+    };
 }
 
 export default useSession;

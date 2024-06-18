@@ -17,9 +17,9 @@ const RegisterScreen = ({ navigation }) => {
             try {
                 const registerData = await register(email, cpf, name, password);
                 const loginData = await login(email, password);
-                await createSession(loginData.id, loginData.token, loginData.role);
+                await createSession(loginData.id, loginData.token, Number(loginData.role));
                 Alert.alert('Cadastro bem-sucedido');
-                navigation.navigate('Main');
+                navigation.navigate(loginData.role == 3 ? 'BaggageMain' : 'UserMain');
             } catch (error) {
                 Alert.alert("Erro ao efetuar o cadastro, tente novamente mais tarde.");
             }

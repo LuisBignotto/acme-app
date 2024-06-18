@@ -24,7 +24,7 @@ const ProfileScreen = ({ navigation }) => {
 
     const fetchTrackedBaggages = async () => {
         try {
-            const data = await getBaggagesTrackedByUser(user.userId);
+            const data = await getBaggagesTrackedByUser(userData.id);
             setTrackedBaggages(data);
         } catch (error) {
             setError(error.message);
@@ -41,21 +41,13 @@ const ProfileScreen = ({ navigation }) => {
             };
 
             loadData();
-        }, [])
+        }, [user.userId])
     );
 
     if (loading) {
         return (
             <View style={styles.container}>
                 <ActivityIndicator size="large" color="#0000ff" />
-            </View>
-        );
-    }
-
-    if (error) {
-        return (
-            <View style={styles.container}>
-                <Text style={styles.errorText}>{error}</Text>
             </View>
         );
     }
@@ -69,7 +61,7 @@ const ProfileScreen = ({ navigation }) => {
             </View>
             <View style={styles.mainContainer}>
                 <Text style={styles.baggageTitle}>Suas Bagagens</Text>
-                {userData && userData.baggages.length === 0 ? (
+                {userData && userData.baggages.length == 0 ? (
                     <View style={styles.noBaggage}>
                         <Text style={styles.noBaggageTxt}>Você não possui nenhuma bagagem.</Text>
                     </View>
