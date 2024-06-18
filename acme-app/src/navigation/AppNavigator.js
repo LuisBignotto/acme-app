@@ -10,6 +10,7 @@ import BaggageDetailsScreen from '../screens/BaggageDetailsScreen';
 import TicketDetailsScreen from '../screens/TicketDetailsScreen';
 import CreateTicketScreen from '../screens/CreateTicketScreen';
 import QrCodeScannerScreen from '../screens/QrCodeScannerScreen';
+import ManagerQrCodeScreen from '../screens/ManagerQrCodeScreen';
 
 const Stack = createStackNavigator();
 
@@ -25,10 +26,11 @@ const AppNavigator = () => {
     }
 
     return (
-        <Stack.Navigator initialRouteName={user.jwtToken ? (user.role == 3 ? 'BaggageMain' : 'UserMain') : 'Login'}>
+        <Stack.Navigator initialRouteName={user.jwtToken ? (user.roleId == 3 ? 'BaggageMain' : 'UserMain') : 'Login'}>
             <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
             <Stack.Screen name="UserMain" component={UserTabNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name="ManagerQrCodeScreen" component={ManagerQrCodeScreen} options={{ headerShown: false }} />
             <Stack.Screen name="BaggageMain" component={BaggageTabNavigator} options={{ headerShown: false }} />
             <Stack.Screen name="BaggageDetails" component={BaggageDetailsScreen} options={{ headerShown: false }} />
             <Stack.Screen name="TicketDetails" component={TicketDetailsScreen} options={{ headerShown: false }} />
