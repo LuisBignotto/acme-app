@@ -1,30 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { getUserTickets } from '../services/ticketService';
 import TicketItem from '../components/TicketItem';
 import FaqItem from '../components/FaqItem';
-import { useUserContext } from '../contexts/UserContext';
+import useSession from '../hooks/useSession';
 
 const SupportScreen = ({ navigation }) => {
-    const { user } = useUserContext();
+    const { getSession } = useSession();
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchTickets = async () => {
-            try {
-                const data = await getUserTickets(user.userId);
-                setTickets(data);
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchTickets = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const session = await getSession();
+            const data = await getUserTickets(Number(session.userId));
+            setTickets(data);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchTickets();
-    }, [user.userId]);
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchTickets();
+        }, [])
+    );
 
     const handleCreateTicket = () => {
         navigation.navigate('CreateTicket');

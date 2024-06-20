@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { createTicket } from '../services/ticketService';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import useSession from '../hooks/useSession';
 
 const CreateTicketScreen = ({ navigation }) => {
+    const { getSession } = useSession();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
 
@@ -14,7 +15,8 @@ const CreateTicketScreen = ({ navigation }) => {
         }
 
         try {
-            const userId = await AsyncStorage.getItem('userId');
+            const session = await getSession();
+            const userId = session.userId;
             await createTicket({ userId, title, description });
             Alert.alert('Sucesso', 'Ticket criado com sucesso');
             navigation.goBack();

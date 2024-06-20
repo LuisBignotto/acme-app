@@ -38,7 +38,7 @@ const ProfileScreen = ({ navigation }) => {
                 await fetchUserProfile();
                 setLoading(false);
             };
-
+            
             loadData();
         }, [user.userId])
     );
@@ -58,7 +58,6 @@ const ProfileScreen = ({ navigation }) => {
     }
 
     if (error) {
-        console.log(error);
         return (
             <View style={styles.container}>
                 <Text style={styles.errorText}>{error}</Text>

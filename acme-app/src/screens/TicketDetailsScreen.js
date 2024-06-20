@@ -3,14 +3,15 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert 
 import { getMessagesByTicketId, addMessage } from '../services/ticketService';
 import MessageItem from '../components/MessageItem';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useUserContext } from '../contexts/UserContext';
+import useSession from '../hooks/useSession';
 
 const TicketDetailsScreen = ({ route, navigation }) => {
     const { ticket } = route.params;
-    const { user } = useUserContext();
+    const { getSession } = useSession();
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [newMessage, setNewMessage] = useState('');
+    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -24,7 +25,17 @@ const TicketDetailsScreen = ({ route, navigation }) => {
             }
         };
 
-        fetchMessages();
+        const fetchSessionAndMessages = async () => {
+            const session = await getSession();
+            setUserId(session.userId);
+            fetchMessages();
+        };
+
+        fetchSessionAndMessages();
+
+        const interval = setInterval(fetchMessages, 5000);
+
+        return () => clearInterval(interval);
     }, [ticket.id]);
 
     const handleSendMessage = async () => {
@@ -34,7 +45,7 @@ const TicketDetailsScreen = ({ route, navigation }) => {
         }
 
         try {
-            const message = { message: newMessage, senderId: user.userId };
+            const message = { message: newMessage, senderId: userId };
             await addMessage(ticket.id, message);
             setMessages([...messages, message]);
             setNewMessage('');
@@ -55,7 +66,7 @@ const TicketDetailsScreen = ({ route, navigation }) => {
                     <MessageItem
                         key={index}
                         message={message}
-                        isMine={message.senderId == user.userId}
+                        isMine={message.senderId == userId}
                     />
                 ))}
             </ScrollView>
